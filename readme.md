@@ -1,6 +1,6 @@
 # setup OCP
 
-## Create the projects:
+## Create the projects
 
 * cicd
 * cool-app-dev
