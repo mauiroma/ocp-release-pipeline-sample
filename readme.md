@@ -1,4 +1,6 @@
-# setup OCP
+# Setup OCP
+
+This example works both on openshift and minishift.
 
 ## Create the projects
 
@@ -18,6 +20,10 @@ $ oc new-app --name=cool-app jboss-webserver30-tomcat8-openshift~/tmp/nocontent
 ```
 
 **Note**: you have to create the *dummy dir* ```/tmp/nocontent```
+
+You should see this from the web console:
+
+![Empty project](images/empty-app-created.png)
 
 We can now start the binary deploy (build the cool-app with maven from the web-app dir):
 
@@ -39,34 +45,29 @@ For prod we repeat the steps we did for *cool-app-dev* but:
 * Deploy the binary warfile
 * Expose the service 
 
-After we tested that everything is ok we can delete the ```BuildConfig```, we left only the ```Deploymentconfig``` beacouse we will use the pipelines to promote the images.
+After we tested that everything is ok we can delete the ```BuildConfig```, we left only the ```Deploymentconfig``` because we will use the pipelines to promote the images.
 
 To delete the ```BuildConfig``` run:
 
 ```
 $ oc delete bc cool-app
-$ buildconfig "cool-app" deleted
+buildconfig "cool-app" deleted
 ```
 
 Now we need to edit the ```Deploymentconfig```
 
 Got to the web console in the deployment and choose ```Edit Yaml```
 
+![Empty project](images/Edit_prod_yaml_from_image_source.png)
+
 Find:
 
 ```
 [...]
- - imageChangeParams:
-        automatic: true
-        containerNames:
-          - cool-app
         from:
           kind: ImageStreamTag
           name: 'cool-app:latest'
           namespace: cool-app-prod
-        lastTriggeredImage: >-
-          172.30.1.1:5000/cool-app-prod/cool-app@sha256:880155cdc3e002346af703a8e1cf9490ca9235d8605f23583615dfc4db54fea3
-      type: ImageChange
 [...]
 ```
 
@@ -74,23 +75,21 @@ And change to:
 
 ```
 [...]
- - imageChangeParams:
-        automatic: true
-        containerNames:
-          - cool-app
         from:
           kind: ImageStreamTag
           name: 'cool-app:prod-rc'
           namespace: cool-app-prod
-        lastTriggeredImage: >-
-          172.30.1.1:5000/cool-app-prod/cool-app@sha256:880155cdc3e002346af703a8e1cf9490ca9235d8605f23583615dfc4db54fea3
-      type: ImageChange
 [...]      
 ```
+It should looks like this:
 
-## cicd with jenkins
+![Empty project](images/Edit_prod_yaml_from_image_source_02.png)
 
-First add jenkins to the project (from the webconsole)
+## CICD with jenkins
+
+First add jenkins to the project (from the webconsole):
+
+![Empty project](images/add-jenkins.png)
 
 Then go to cli and switch to the project:
 
@@ -98,7 +97,7 @@ Then go to cli and switch to the project:
 oc project cicd
 ```
 
-Grant all the rights to jenkins service account:
+Grant all the roles to jenkins service account for the other two projects (cool-app-dev and cool-app-prod):
 
 system:serviceaccount:cicd:jenkins
 
@@ -113,4 +112,6 @@ Add the pipeline to the project
 $ oc create -f pipeline-release-sample.yaml
 ```
 
-Now fromt he cicd project we can start the pipeline to promote our build from dev to prod
+Now from the cicd project we can start the pipeline to promote our build from dev to prod:
+
+![Empty project](images/pipeline-run.png)
