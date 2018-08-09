@@ -62,8 +62,8 @@ pipeline {
         stage('OCP'){
             stages {
                 stage('Deploy') {
-                    withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
-                        steps {                        
+                    script {                        
+                        withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
                             sh """ 
                                 rm -rf ${WORKSPACE}/deployments
                                 mkdir ${WORKSPACE}/deployments
