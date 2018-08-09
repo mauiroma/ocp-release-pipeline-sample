@@ -63,13 +63,14 @@ pipeline {
             stages {
                 stage('Deploy') {
                     withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
-                    steps {                        
-                        sh """ 
-                            rm -rf ${WORKSPACE}/deployments
-                            mkdir ${WORKSPACE}/deployments
-                            cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
-                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=https://192.168.64.3:8443 --token=${OCP_SERVICE_TOKEN} --insecure-skip-tls-verify --namespace=release-pipeline
-                        """
+                        steps {                        
+                            sh """ 
+                                rm -rf ${WORKSPACE}/deployments
+                                mkdir ${WORKSPACE}/deployments
+                                cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
+                                oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=https://192.168.64.3:8443 --token=${OCP_SERVICE_TOKEN} --insecure-skip-tls-verify --namespace=release-pipeline
+                            """
+                        }
                     }
                 }
             }
