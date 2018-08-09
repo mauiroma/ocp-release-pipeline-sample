@@ -67,8 +67,7 @@ pipeline {
                             rm -rf ${WORKSPACE}/deployments
                             mkdir ${WORKSPACE}/deployments
                             cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
-                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments \
-                            --server=$ocp_cluster_url --token=$ocp_service_token --insecure-skip-tls-verify --namespace=$ocp_namespace
+                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=${ocp_cluster_url} --token=${ocp_service_token} --insecure-skip-tls-verify --namespace=${ocp_namespace}
                         """
                     }
                 }
