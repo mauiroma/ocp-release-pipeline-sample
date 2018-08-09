@@ -48,7 +48,7 @@ pipeline {
                             }else{
                                 echo "PACKAGE"
                                 withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                    sh "mvn -f ${POM_FILE} clean package -Dmaven.javadoc.skip=true -DskipTests "
+                                    sh "mvn -f ${POM_FILE} clean package -Dappversion=${BUILD_TAG} -Dmaven.javadoc.skip=true -DskipTests "
                                 }
                             }
                         }
