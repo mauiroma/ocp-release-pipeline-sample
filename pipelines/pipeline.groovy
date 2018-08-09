@@ -61,7 +61,7 @@ pipeline {
                 stage('Deploy') {
                     steps {
                         sh """ 
-                            rf -rf ${WORKSPACE}/deployments
+                            rm -rf ${WORKSPACE}/deployments
                             mkdir ${WORKSPACE}/deployments
                             cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
                             oc start-build eap-web --from-dir=${WORKSPACE}/deployments
