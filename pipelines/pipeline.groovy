@@ -16,7 +16,7 @@ pipeline {
                     }
                     echo "Releasing tag ${BUILD_TAG}"
                     target_cluster_flags = "--server=${OCP_CLUSTER_URL} --insecure-skip-tls-verify"
-                    target_cluster_flags = "$target_cluster_flags --token=${OCP_SERVICE_TOKEN}  --namespace=${OCP_PRJ_NAMESPACE}"
+                    target_cluster_flags = "$target_cluster_flags   --namespace=${OCP_PRJ_NAMESPACE}"
                 }
             }
         }
@@ -71,10 +71,12 @@ pipeline {
 //                            cp ${WORKSPACE}/runtime-configuration/ocp/standalone-openshift.xml ${WORKSPACE}/s2i-binary/configuration/
                     }
                 }                
+                withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]){}
+                /*
                 stage('UpdateBuild') {
                     steps {
                         script {
-                            withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
+                            //withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
                                 def buildconfigUpdateResult =
                                     sh(
                                         script: "oc patch bc ${OCP_BUILD_NAME}  -p '{\"spec\":{\"output\":{\"to\":{\"kind\":\"ImageStreamTag\",\"name\":\"eap71-nautilus:${BUILD_TAG}\"}}}}' -o json $target_cluster_flags \
@@ -86,18 +88,19 @@ pipeline {
                                     error('BuildConfig update finished with errors')
                                 }
                                 echo "Patch BuildConfig result: $buildconfigUpdateResult"
-                            }
+                            //}
                         }
 
                     }
-                }                                
+                }     
+                */                          
                 stage('Build') {
                     steps {
                         script {                        
-                            withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
+                            //withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
                                 def startBuildResult =
                                     sh(
-                                        script: "oc start-build ${OCP_BUILD_NAME} --from-dir=${WORKSPACE}/deployments $target_cluster_flags",
+                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE}/deployments $target_cluster_flags",
                                         returnStdout: true
                                     )
                                 if (!startBuildResult?.trim()) {
@@ -106,9 +109,10 @@ pipeline {
                                 }
                                 echo "Start build result: $startBuildResult"
 
-                            }
+                            //}
                         }
                     }
+                }
                 }
             }
         }
