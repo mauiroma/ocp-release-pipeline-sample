@@ -39,7 +39,7 @@ pipeline {
                 }
                 stage('Publish on nexus') {
                     steps {
-//                        script{                            
+                        script{                            
                             if("${DEPLOY_ON_NEXUS}"==true){
                                 echo "DEPLOY ON NEXUS"
                                 withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
@@ -51,7 +51,7 @@ pipeline {
                                     sh "mvn -f ${POM_FILE} clean package -Dmaven.javadoc.skip=true -DskipTests "
                                 }
                             }
-//                        }
+                        }
                     }
                 }
             }
