@@ -40,7 +40,7 @@ pipeline {
                 stage('Publish on nexus') {
                     steps {
                         script{
-                            echo ${DEPLOY_ON_NEXUS}
+                            echo "${DEPLOY_ON_NEXUS}"
                             //if(${DEPLOY_ON_NEXUS}){
                             //    echo "DEPLOY ON NEXUS"
                             //    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
