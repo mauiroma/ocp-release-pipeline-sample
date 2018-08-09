@@ -15,8 +15,7 @@ pipeline {
                         error('Tag to build is empty')
                     }
                     echo "Releasing tag ${BUILD_TAG}"
-
-                    //target_cluster_flags = "--server=$ocp_cluster_url --insecure-skip-tls-verify"
+                    target_cluster_flags = "--server=${OCP_CLUSTER_URL} --insecure-skip-tls-verify"
                 }
             }
         }
@@ -69,7 +68,7 @@ pipeline {
                                     rm -rf ${WORKSPACE}/deployments
                                     mkdir ${WORKSPACE}/deployments
                                     cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
-                                    oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=https://192.168.64.3:8443 --token=${OCP_SERVICE_TOKEN} --insecure-skip-tls-verify --namespace=release-pipeline
+                                    oc start-build ${OCP_BUILD_NAME} --from-dir=${WORKSPACE}/deployments $target_cluster_flags --token=${OCP_SERVICE_TOKEN}  --namespace=${OCP_PRJ_NAMESPACE}
                                 """
                             }
                         }
