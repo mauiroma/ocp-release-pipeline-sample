@@ -38,28 +38,36 @@ pipeline {
                     }
                 }
                 stage('Publish on nexus') {
-                    echo "SKIPPED"
                     steps {
-                        if(${DEPLOY_ON_NEXUS}){
-                            withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                sh "mvn -f ${POM_FILE} clean deploy -Dmaven.javadoc.skip=true -DskipTests "
-                            }
-                        }else{
-                            script{
-                                echo "SKIPPED"
-                            }
+                        script{
+                            echo ${DEPLOY_ON_NEXUS}
+                            //if(${DEPLOY_ON_NEXUS}){
+                            //    echo "DEPLOY ON NEXUS"
+                            //    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                            //        sh "mvn -f ${POM_FILE} clean deploy -Dmaven.javadoc.skip=true -DskipTests "
+                            //    }
+                            //}else{
+                            //    echo "PACKAGE"
+                            //    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                            //        sh "mvn -f ${POM_FILE} clean package -Dmaven.javadoc.skip=true -DskipTests "
+                            //    }
+                            //}
                         }
                     }
                 }
             }
         }
-        stage('OCP Deploy'){
-            steps {
-                sh """ 
-                    mkdir ${WORKSPACE}/deployments
-                    cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
-                    oc start-build eap-web --from-dir=${WORKSPACE}/deployments
-                """
+        stage('OCP'){
+            stages {
+                stage('Deploy') {
+                    steps {
+                        sh """ 
+                            mkdir ${WORKSPACE}/deployments
+                            cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
+                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments
+                        """
+                    }
+                }
             }
         }
     }
