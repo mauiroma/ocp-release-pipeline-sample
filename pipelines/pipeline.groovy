@@ -71,7 +71,7 @@ pipeline {
 //                            cp ${WORKSPACE}/runtime-configuration/ocp/standalone-openshift.xml ${WORKSPACE}/s2i-binary/configuration/
                     }
                 }                
-                withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]){}
+                withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]){
                 /*
                 stage('UpdateBuild') {
                     steps {
