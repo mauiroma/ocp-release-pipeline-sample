@@ -1,7 +1,7 @@
 def target_cluster_flags = ""
-def ocp_service_token="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJyZWxlYXNlLXBpcGVsaW5lIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtdG9rZW4tMjR6cHYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjVjZjhmOTE5LTk3ZjctMTFlOC05MTZhLWMyMzVmNzg2NThmNCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpyZWxlYXNlLXBpcGVsaW5lOmplbmtpbnMifQ.WoFizqf8jQTksiUmzBFxqe-LN9HeeR1fVel89YZgH0fHb0oaDKlR-3E5epM7IE46i75KDbDADIZ2WXTF_y7VXYDlvnX0sRBj9kulw0LFXFW9rAYwv30KKU4Xbawr0BRN0gFy3G1_0WCFePrSnC_mmn1W7pSJyMuqPD1OJER2a_E0xjm6diVJJLi8UZ5K6QbUgDhBSub1m1oVNknwqt2sJtti_9YAloMR1FyqFEfA7nYGNs6eFz_dLLm3Jc2iDJCqIPdRJAVXCrLMQwGMBQeuKgKS0VnlBp8jNrFI7O62hM3LmPV5C027XaHF6TLjf8g7ybWo2Gax-iSuma0AcDkScQ"
-def ocp_cluster_url="https://192.168.64.3:8443"
-def ocp_namespace=release-pipeline
+//def ocp_service_token="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJyZWxlYXNlLXBpcGVsaW5lIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtdG9rZW4tMjR6cHYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjVjZjhmOTE5LTk3ZjctMTFlOC05MTZhLWMyMzVmNzg2NThmNCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpyZWxlYXNlLXBpcGVsaW5lOmplbmtpbnMifQ.WoFizqf8jQTksiUmzBFxqe-LN9HeeR1fVel89YZgH0fHb0oaDKlR-3E5epM7IE46i75KDbDADIZ2WXTF_y7VXYDlvnX0sRBj9kulw0LFXFW9rAYwv30KKU4Xbawr0BRN0gFy3G1_0WCFePrSnC_mmn1W7pSJyMuqPD1OJER2a_E0xjm6diVJJLi8UZ5K6QbUgDhBSub1m1oVNknwqt2sJtti_9YAloMR1FyqFEfA7nYGNs6eFz_dLLm3Jc2iDJCqIPdRJAVXCrLMQwGMBQeuKgKS0VnlBp8jNrFI7O62hM3LmPV5C027XaHF6TLjf8g7ybWo2Gax-iSuma0AcDkScQ"
+//def ocp_cluster_url="https://192.168.64.3:8443"
+//def ocp_namespace=release-pipeline
 
 pipeline {
     agent any
@@ -67,7 +67,7 @@ pipeline {
                             rm -rf ${WORKSPACE}/deployments
                             mkdir ${WORKSPACE}/deployments
                             cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/deployments
-                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=${ocp_cluster_url} --token=${ocp_service_token} --insecure-skip-tls-verify --namespace=${ocp_namespace}
+                            oc start-build eap-web --from-dir=${WORKSPACE}/deployments --server=https://192.168.64.3:8443 --token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJyZWxlYXNlLXBpcGVsaW5lIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtdG9rZW4tMjR6cHYiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjVjZjhmOTE5LTk3ZjctMTFlOC05MTZhLWMyMzVmNzg2NThmNCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpyZWxlYXNlLXBpcGVsaW5lOmplbmtpbnMifQ.WoFizqf8jQTksiUmzBFxqe-LN9HeeR1fVel89YZgH0fHb0oaDKlR-3E5epM7IE46i75KDbDADIZ2WXTF_y7VXYDlvnX0sRBj9kulw0LFXFW9rAYwv30KKU4Xbawr0BRN0gFy3G1_0WCFePrSnC_mmn1W7pSJyMuqPD1OJER2a_E0xjm6diVJJLi8UZ5K6QbUgDhBSub1m1oVNknwqt2sJtti_9YAloMR1FyqFEfA7nYGNs6eFz_dLLm3Jc2iDJCqIPdRJAVXCrLMQwGMBQeuKgKS0VnlBp8jNrFI7O62hM3LmPV5C027XaHF6TLjf8g7ybWo2Gax-iSuma0AcDkScQ --insecure-skip-tls-verify --namespace=release-pipeline
                         """
                     }
                 }
