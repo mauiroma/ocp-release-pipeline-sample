@@ -74,7 +74,7 @@ pipeline {
                 stage('UpdateBuild') {
                     steps {
                         script {
-                            def tmp = ${OCP_SERVICE_TOKEN}
+                            def tmp = '${OCP_SERVICE_TOKEN}'
                             withCredentials([string(credentialsId: tmp, variable: 'OCP_SERVICE_TOKEN')]) {
                                 def buildconfigUpdateResult =
                                     sh(
