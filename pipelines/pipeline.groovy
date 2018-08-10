@@ -74,7 +74,8 @@ pipeline {
                 stage('UpdateBuild') {
                     steps {
                         script {
-                            withCredentials([string(credentialsId: '${env.OCP_SERVICE_TOKEN}', variable: 'OCP_SERVICE_TOKEN')]) {
+                            def tmp = ${OCP_SERVICE_TOKEN}
+                            withCredentials([string(credentialsId: tmp, variable: 'OCP_SERVICE_TOKEN')]) {
                                 def buildconfigUpdateResult =
                                     sh(
                                         script: "oc patch bc ${OCP_BUILD_NAME}  -p '{\"spec\":{\"output\":{\"to\":{\"kind\":\"ImageStreamTag\",\"name\":\"eap71-nautilus:${BUILD_TAG}\"}}}}' --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags \
