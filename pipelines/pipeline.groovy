@@ -65,9 +65,10 @@ pipeline {
                     steps {
                         sh """
                             rm -rf ${WORKSPACE}/s2i-binary
-                            mkdir -p ${WORKSPACE}/s2i-binary/configuration
+                            mkdir -p ${WORKSPACE}/s2i-binary
                             cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/s2i-binary
                         """
+//                            mkdir -p ${WORKSPACE}/s2i-binary/configuration
 //                            cp ${WORKSPACE}/runtime-configuration/ocp/standalone-openshift.xml ${WORKSPACE}/s2i-binary/configuration/
                     }
                 }                
