@@ -74,7 +74,6 @@ pipeline {
                 stage('UpdateBuild') {
                     steps {
                         script {
-                            //def tmp = "${OCP_SERVICE_TOKEN}"
                             withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def buildconfigUpdateResult =
                                     sh(
@@ -98,7 +97,7 @@ pipeline {
                             withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def startBuildResult =
                                     sh(
-                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE}/deployments $target_cluster_flags --follow",
+                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE}/s2i-binary $target_cluster_flags --follow",
                                         returnStdout: true
                                     )
                                 if (!startBuildResult?.trim()) {
