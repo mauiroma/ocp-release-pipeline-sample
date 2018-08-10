@@ -106,7 +106,6 @@ pipeline {
                                     error('Start build update finished with errors')
                                 }
                                 echo "Start build result: $startBuildResult"
-
                             }
                         }
                     }
@@ -146,7 +145,7 @@ pipeline {
                             withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def rollout = 
                                     sh(
-                                        script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                                        script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags --follow",
                                         returnStdout: true
                                     )
                                 if (!rollout?.trim()) {
