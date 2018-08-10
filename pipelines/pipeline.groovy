@@ -86,7 +86,7 @@ pipeline {
                                     error('BuildConfig update finished with errors')
                                 }
                                 echo "Patch BuildConfig result: $buildconfigUpdateResult"
-                            //}
+                            }
                         }
 
                     }
