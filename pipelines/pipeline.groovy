@@ -74,8 +74,8 @@ pipeline {
                 stage('UpdateBuild') {
                     steps {
                         script {
-                            def tmp = "${OCP_SERVICE_TOKEN}"
-                            withCredentials([string(credentialsId: tmp, variable: 'OCP_SERVICE_TOKEN')]) {
+                            //def tmp = "${OCP_SERVICE_TOKEN}"
+                            withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def buildconfigUpdateResult =
                                     sh(
                                         script: "oc patch bc ${OCP_BUILD_NAME}  -p '{\"spec\":{\"output\":{\"to\":{\"kind\":\"ImageStreamTag\",\"name\":\"eap71-nautilus:${BUILD_TAG}\"}}}}' --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags \
@@ -95,7 +95,7 @@ pipeline {
                 stage('StartBuild') {
                     steps {
                         script {                        
-                            withCredentials([string(credentialsId: 'ocp_service_token', variable: 'OCP_SERVICE_TOKEN')]) {
+                            withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def startBuildResult =
                                     sh(
                                         script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE}/deployments $target_cluster_flags --follow",
