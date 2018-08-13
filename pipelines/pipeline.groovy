@@ -3,7 +3,7 @@ def target_cluster_flags = ""
 //def ocp_cluster_url="https://192.168.64.3:8443"
 //def ocp_namespace=release-pipeline
 def docker_registry = "172.30.1.1"
-def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
+//def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
 pipeline {
     agent any
