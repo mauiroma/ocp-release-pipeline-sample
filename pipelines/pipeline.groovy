@@ -3,6 +3,7 @@ def target_cluster_flags = ""
 //def ocp_cluster_url="https://192.168.64.3:8443"
 //def ocp_namespace=release-pipeline
 def docker_registry = "172.30.1.1"
+def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
 pipeline {
     agent any
@@ -29,13 +30,14 @@ pipeline {
                             sh(                                
                                 script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
                                 returnStdout: true
-                            )
+                            )                         
                         if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}")) {
                             def patchImageStream = 
                                 sh(
                                     script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
                                     returnStdout: true
                                 )
+                            echo patchImageStream
                             if (!patchImageStream?.trim()) {
                                 def rollout = 
                                     sh(
