@@ -21,6 +21,43 @@ pipeline {
                 }
             }
         }
+        stage('Restore') {
+            steps {
+                script {                    
+                    withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
+                        def existImage =
+                            //verifica che sia presente un immagine con la stessa versione
+                            //@TODO boolean chek per decidere se sovrascrivere o fare il restore 
+                            sh(                                
+                                script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
+                                returnStdout: true
+                            )
+                        if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}") {
+                            def patchImageStream = 
+                                sh(
+                                    script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                                    returnStdout: true
+                                )
+                            if (!patchImageStream?.trim()) {
+                                def rollout = 
+                                    sh(
+                                        script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                                        returnStdout: true
+                                    )
+                                if (!rollout?.trim()) {
+                                    currentBuild.result = 'ERROR'
+                                    error('Rollout finished with errors')
+                                }
+                            }
+                            currentBuild.result = 'Restore imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
+                            return
+                        }
+                    }
+                }
+
+            }
+        }    
+
         stage('Build') {
             stages {
                 stage('Source checkout') {
@@ -127,7 +164,7 @@ pipeline {
                                             script: "oc get dc ${OCP_BUILD_NAME} -o jsonpath='{.spec.template.spec.containers[0].image}' --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
                                             returnStdout: true
                                         )
-                                    //if current DeploymentConfig image tag version iit's different form BUIL_TAG we end the pipeline with an error
+                                    //if current DeploymentConfig image tag version it's different form BUIL_TAG we end the pipeline with an error
                                     if (!currentImageStreamVersion.equalsIgnoreCase("$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG}")) {
                                         echo "DeploymentConfig image tag version is: $currentImageStreamVersion but expected tag is ${BUILD_TAG}"
                                         currentBuild.result = 'ERROR'
