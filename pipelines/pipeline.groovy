@@ -26,13 +26,11 @@ pipeline {
                 script {                    
                     withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                         def existImage =
-                            //verifica che sia presente un immagine con la stessa versione
-                            //@TODO boolean chek per decidere se sovrascrivere o fare il restore 
                             sh(                                
                                 script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
                                 returnStdout: true
                             )
-                        if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}") {
+                        if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}")) {
                             def patchImageStream = 
                                 sh(
                                     script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
@@ -49,7 +47,7 @@ pipeline {
                                     error('Rollout finished with errors')
                                 }
                             }
-                            currentBuild.result = 'Restore imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
+                            currentBuild.result = 'Restored imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
                             return
                         }
                     }
