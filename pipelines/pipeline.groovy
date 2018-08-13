@@ -26,31 +26,40 @@ pipeline {
             steps {
                 script {                    
                     withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
-                        def existImage =
-                            sh(                                
-                                script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
+                        def currentImage = 
+                            sh(
+                                script: "oc get dc ${OCP_BUILD_NAME} -o jsonpath='{.spec.template.spec.containers[0].image}' --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
                                 returnStdout: true
-                            )                         
-                        if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}")) {
-                            def patchImageStream = 
-                                sh(
-                                    script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                            )
+                        if(currentImage.contains("${OCP_BUILD_NAME}:${BUILD_TAG}")){
+                            currentBuild.result = 'Image whit version ${OCP_BUILD_NAME}:${BUILD_TAG} already active, nothing to do'
+                            return
+                        }else{
+                            def existImage =
+                                sh(                                
+                                    script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
                                     returnStdout: true
-                                )
-                            echo patchImageStream
-                            if (!patchImageStream?.trim()) {
-                                def rollout = 
+                                )                         
+                            if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}")) {
+                                def patchImageStream = 
                                     sh(
-                                        script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                                        script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
                                         returnStdout: true
                                     )
-                                if (!rollout?.trim()) {
-                                    currentBuild.result = 'ERROR'
-                                    error('Rollout finished with errors')
+                                if (!patchImageStream?.trim()) {
+                                    def rollout = 
+                                        sh(
+                                            script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
+                                            returnStdout: true
+                                        )
+                                    if (!rollout?.trim()) {
+                                        currentBuild.result = 'ERROR'
+                                        error('Rollout finished with errors')
+                                    }
                                 }
+                                currentBuild.result = 'Restored imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
+                                return
                             }
-                            currentBuild.result = 'Restored imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
-                            return
                         }
                     }
                 }
