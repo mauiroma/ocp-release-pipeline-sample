@@ -2,7 +2,7 @@ oc new-project release-pipeline
 oc new-build --image-stream=openshift/jboss-eap70-openshift:1.7 --name=eap-web --binary=true
 oc start-build eap-web --from-dir=/opt/OpenShift/ocp-release-pipeline-sample/ocp
 oc new-app eap-web
-oc expose svc/eap-messaging
+oc expose svc/eap-web
 oc get route
 
 
