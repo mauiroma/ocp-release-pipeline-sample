@@ -87,9 +87,10 @@ pipeline {
                     }
                 }
                 stage('SonarQube analysis') {
-                    // requires SonarQube Scanner 2.8+
-                    withSonarQubeEnv('Sonar-MacLocalhost') {
-                      sh "mvn sonar:sonar"
+                    steps {
+                        withSonarQubeEnv('Sonar-MacLocalhost') {
+                          sh "mvn -f ${POM_FILE} sonar:sonar"
+                        }
                     }
                 }                
                 stage('Publish on nexus') {
