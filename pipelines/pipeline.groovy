@@ -22,6 +22,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage('Restore') {
             steps {
                 script {                    
@@ -31,8 +32,9 @@ pipeline {
                                 script: "oc get dc ${OCP_BUILD_NAME} -o jsonpath='{.spec.template.spec.containers[0].image}' --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
                                 returnStdout: true
                             )
+                        //If currentImage is the same version skip pipeline    
                         if(currentImage.contains("${OCP_BUILD_NAME}:${BUILD_TAG}")){
-                            currentBuild.result = 'Image whit version ${OCP_BUILD_NAME}:${BUILD_TAG} already active, nothing to do'
+                            currentBuild.result = 'Image whit version ${OCP_BUILD_NAME}:${BUILD_TAG} already active, nothing to do'                                                        
                             return
                         }else{
                             def existImage =
@@ -64,7 +66,7 @@ pipeline {
                     }
                 }
             }
-        }    
+        }*/
 
         stage('Build') {
             stages {
@@ -86,13 +88,26 @@ pipeline {
                         }
                     }
                 }
-                stage('SonarQube analysis') {
-                    steps {
-                        withSonarQubeEnv('Sonar-MacLocalhost') {
-                          sh "mvn -f ${POM_FILE} sonar:sonar"
+                stage('Run Tests') {
+                    parallel {
+                        stage('SonarQube analysis') {
+                            steps {
+                                withSonarQubeEnv('Sonar-MacLocalhost') {
+                                    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                      sh "mvn -f ${POM_FILE} sonar:sonar"
+                                    }
+                                }
+                            }
+                        }                
+                        stage('Run Maven Tests') {
+                            steps {
+                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                    sh "mvn -f ${POM_FILE} test"
+                                }
+                            }
                         }
                     }
-                }                
+                }
                 stage('Publish on nexus') {
                     steps {
                         script{                            
