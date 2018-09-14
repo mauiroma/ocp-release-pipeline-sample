@@ -5,6 +5,7 @@ def target_cluster_flags = ""
 def docker_registry = "172.30.1.1"
 //def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
+def sonar = ${SONAR} ?: false
 pipeline {
     agent any
     stages{
@@ -88,34 +89,18 @@ pipeline {
                         }
                     }
                 }
-/*
-                stage('run-parallel-branches') {
-                    steps {
-                        parallel(
-                            SonarQube: {
-                                withSonarQubeEnv('Sonar-MacLocalhost') {
-                                    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                        sh "mvn -f ${POM_FILE} sonar:sonar"
-                                    }
-                                }
-                            },
-                            MavenTests: {
-                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                    sh "mvn -f ${POM_FILE} test"
-                                }
-                            }
-                        )
-                    }
-                }
-*/                
                 stage('Run Tests') {
                     parallel {
                         stage('SonarQube analysis') {
                             steps {
-                                withSonarQubeEnv('Sonar-MacLocalhost') {
-                                    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                      sh "mvn -f ${POM_FILE} sonar:sonar"
+                                if(${sonar}){
+                                    withSonarQubeEnv('Sonar-MacLocalhost') {
+                                        withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                          sh "mvn -f ${POM_FILE} sonar:sonar"
+                                        }
                                     }
+                                }else{
+                                    echo "SonarQube analysis skipped"
                                 }
                             }
                         }                
