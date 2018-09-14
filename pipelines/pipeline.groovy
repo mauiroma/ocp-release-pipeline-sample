@@ -93,14 +93,16 @@ pipeline {
                     parallel {
                         stage('SonarQube analysis') {
                             steps {
-                                if(${sonar}){
-                                    withSonarQubeEnv('Sonar-MacLocalhost') {
-                                        withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                          sh "mvn -f ${POM_FILE} sonar:sonar"
+                                script{
+                                    if(${sonar}){
+                                        withSonarQubeEnv('Sonar-MacLocalhost') {
+                                            withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                              sh "mvn -f ${POM_FILE} sonar:sonar"
+                                            }
                                         }
+                                    }else{
+                                        echo "SonarQube analysis skipped"
                                     }
-                                }else{
-                                    echo "SonarQube analysis skipped"
                                 }
                             }
                         }                
