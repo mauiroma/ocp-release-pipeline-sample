@@ -94,7 +94,7 @@ pipeline {
                         stage('SonarQube analysis') {
                             steps {
                                 script{
-                                    if(Boolean.parseBoolean(${CHECK_SONAR})){
+                                    if(Boolean.parseBoolean(env.CHECK_SONAR)){
                                         withSonarQubeEnv('Sonar-MacLocalhost') {
                                             withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
                                               sh "mvn -f ${POM_FILE} sonar:sonar"
