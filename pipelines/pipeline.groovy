@@ -68,8 +68,8 @@ pipeline {
             }
         }*/
 
-        stage('Build') {
-            stages {
+        //stage('Build') {
+        //    stages {
                 stage('Source checkout') {
                     steps {
                         checkout(
@@ -88,7 +88,7 @@ pipeline {
                         }
                     }
                 }
-
+/*
                 stage('run-parallel-branches') {
                     steps {
                         parallel(
@@ -107,7 +107,7 @@ pipeline {
                         )
                     }
                 }
-                /*
+*/                
                 stage('Run Tests') {
                     parallel {
                         stage('SonarQube analysis') {
@@ -128,7 +128,6 @@ pipeline {
                         }
                     }
                 }
-                */
                 stage('Publish on nexus') {
                     steps {
                         script{                            
@@ -146,8 +145,8 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
+            //}
+        //}
         stage('OCP'){
             stages {
                 stage('Prepare') {
