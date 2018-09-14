@@ -20,7 +20,7 @@ pipeline {
                     echo "Releasing tag ${BUILD_TAG}"
                     target_cluster_flags = "--server=${OCP_CLUSTER_URL} --insecure-skip-tls-verify"
                     target_cluster_flags = "$target_cluster_flags   --namespace=${OCP_PRJ_NAMESPACE}"
-                    echo $check_sonar
+                    echo $env.check_sonar
                 }
             }
         }
@@ -95,7 +95,7 @@ pipeline {
                         stage('SonarQube analysis') {
                             steps {
                                 script{
-                                    if(Boolean.parseBoolean($check_sonar)){
+                                    if(Boolean.parseBoolean($env.check_sonar)){
                                         withSonarQubeEnv('Sonar-MacLocalhost') {
                                             withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
                                               sh "mvn -f ${POM_FILE} sonar:sonar"
