@@ -101,6 +101,7 @@ pipeline {
                                         }
                                     }else{
                                         echo "SonarQube analysis skipped"
+                                        currentBuild.result = 'UNSTABLE'
                                     }
                                 }
                             }
@@ -117,7 +118,7 @@ pipeline {
                 stage('Publish on nexus') {
                     steps {
                         script{                            
-                            if("${DEPLOY_ON_NEXUS}"==true){
+                            if(Boolean.parseBoolean(env.DEPLOY_ON_NEXUS}){
                                 echo "DEPLOY ON NEXUS"
                                 withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
                                     sh "mvn -f ${POM_FILE} clean deploy -Dmaven.javadoc.skip=true -DskipTests "
