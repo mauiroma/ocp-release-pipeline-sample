@@ -88,6 +88,26 @@ pipeline {
                         }
                     }
                 }
+
+                stage('run-parallel-branches') {
+                    steps {
+                        parallel(
+                            SonarQube: {
+                                withSonarQubeEnv('Sonar-MacLocalhost') {
+                                    withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                        sh "mvn -f ${POM_FILE} sonar:sonar"
+                                    }
+                                }
+                            },
+                            MavenTests: {
+                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
+                                    sh "mvn -f ${POM_FILE} test"
+                                }
+                            }
+                        )
+                    }
+                }
+                /*
                 stage('Run Tests') {
                     parallel {
                         stage('SonarQube analysis') {
@@ -108,6 +128,7 @@ pipeline {
                         }
                     }
                 }
+                */
                 stage('Publish on nexus') {
                     steps {
                         script{                            
