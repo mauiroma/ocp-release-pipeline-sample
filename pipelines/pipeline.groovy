@@ -5,7 +5,7 @@ def target_cluster_flags = ""
 def docker_registry = "172.30.1.1"
 //def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
-def CHECK_SONAR=env.SONAR ?: "false"
+def check_sonar=env.SONAR ?: "false"
 pipeline {
     agent any
     stages{
@@ -94,12 +94,8 @@ pipeline {
                     parallel {
                         stage('SonarQube analysis') {
                             steps {
-                                withEnv(["BAR=${foo}"]) {
-                                    
-                                }
-
                                 script{
-                                    if(Boolean.parseBoolean(env.CHECK_SONAR)){
+                                    if(Boolean.parseBoolean($check_sonar)){
                                         withSonarQubeEnv('Sonar-MacLocalhost') {
                                             withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
                                               sh "mvn -f ${POM_FILE} sonar:sonar"
