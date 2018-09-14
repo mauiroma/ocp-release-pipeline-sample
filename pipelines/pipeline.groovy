@@ -20,7 +20,7 @@ pipeline {
                     echo "Releasing tag ${BUILD_TAG}"
                     target_cluster_flags = "--server=${OCP_CLUSTER_URL} --insecure-skip-tls-verify"
                     target_cluster_flags = "$target_cluster_flags   --namespace=${OCP_PRJ_NAMESPACE}"
-                    echo "${CHECK_SONAR}"
+                    echo $check_sonar
                 }
             }
         }
