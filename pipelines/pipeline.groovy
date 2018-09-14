@@ -101,7 +101,6 @@ pipeline {
                                         }
                                     }else{
                                         echo "SonarQube analysis skipped"
-                                        currentBuild.result = 'UNSTABLE'
                                     }
                                 }
                             }
