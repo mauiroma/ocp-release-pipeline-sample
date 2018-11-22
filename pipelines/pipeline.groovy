@@ -5,7 +5,6 @@ def target_cluster_flags = ""
 def docker_registry = "172.30.1.1"
 //def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
-def check_sonar=env.SONAR ?: "false"
 pipeline {
     agent any
     stages{
@@ -20,7 +19,6 @@ pipeline {
                     echo "Releasing tag ${BUILD_TAG}"
                     target_cluster_flags = "--server=${OCP_CLUSTER_URL} --insecure-skip-tls-verify"
                     target_cluster_flags = "$target_cluster_flags   --namespace=${OCP_PRJ_NAMESPACE}"
-                    echo $check_sonar
                 }
             }
         }
@@ -95,7 +93,7 @@ pipeline {
                         stage('SonarQube analysis') {
                             steps {
                                 script{
-                                    if(Boolean.parseBoolean(env.check_sonar)){
+                                    if(Boolean.parseBoolean(env.SONAR)){
                                         withSonarQubeEnv('Sonar-MacLocalhost') {
                                             withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
                                               sh "mvn -f ${POM_FILE} sonar:sonar"

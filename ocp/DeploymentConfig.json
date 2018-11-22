@@ -1,0 +1,122 @@
+{
+    "apiVersion": "apps.openshift.io/v1",
+    "kind": "DeploymentConfig",
+    "metadata": {
+        "annotations": {
+            "openshift.io/generated-by": "OpenShiftNewApp"
+        },
+        "creationTimestamp": "2018-08-10T13:12:10Z",
+        "generation": 19,
+        "labels": {
+            "app": "eap-web"
+        },
+        "name": "eap-web",
+        "namespace": "release-pipeline",
+        "resourceVersion": "1098694",
+        "selfLink": "/apis/apps.openshift.io/v1/namespaces/release-pipeline/deploymentconfigs/eap-web",
+        "uid": "fd2df473-9c9e-11e8-90b6-c235f78658f4"
+    },
+    "spec": {
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "app": "eap-web",
+            "deploymentconfig": "eap-web"
+        },
+        "strategy": {
+            "activeDeadlineSeconds": 21600,
+            "resources": {},
+            "rollingParams": {
+                "intervalSeconds": 1,
+                "maxSurge": "25%",
+                "maxUnavailable": "25%",
+                "timeoutSeconds": 600,
+                "updatePeriodSeconds": 1
+            },
+            "type": "Rolling"
+        },
+        "template": {
+            "metadata": {
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                },
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "eap-web",
+                    "deploymentconfig": "eap-web"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "image": "172.30.1.1:5000/release-pipeline/eap-web:1.0",
+                        "imagePullPolicy": "Always",
+                        "name": "eap-web",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8443,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8778,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+            }
+        },
+        "test": false,
+        "triggers": [
+            {
+                "type": "ConfigChange"
+            }
+        ]
+    },
+    "status": {
+        "availableReplicas": 1,
+        "conditions": [
+            {
+                "lastTransitionTime": "2018-08-10T15:13:04Z",
+                "lastUpdateTime": "2018-08-10T15:13:04Z",
+                "message": "Deployment config has minimum availability.",
+                "status": "True",
+                "type": "Available"
+            },
+            {
+                "lastTransitionTime": "2018-08-10T16:02:21Z",
+                "lastUpdateTime": "2018-08-10T16:02:24Z",
+                "message": "replication controller \"eap-web-13\" successfully rolled out",
+                "reason": "NewReplicationControllerAvailable",
+                "status": "True",
+                "type": "Progressing"
+            }
+        ],
+        "details": {
+            "causes": [
+                {
+                    "type": "ConfigChange"
+                }
+            ],
+            "message": "config change"
+        },
+        "latestVersion": 13,
+        "observedGeneration": 19,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "unavailableReplicas": 0,
+        "updatedReplicas": 1
+    }
+}

@@ -1,0 +1,118 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "image.openshift.io/v1",
+            "generation": 1,
+            "image": {
+                "dockerImageLayers": null,
+                "dockerImageMetadata": {
+                    "ContainerConfig": {},
+                    "Created": null,
+                    "Id": "",
+                    "apiVersion": "1.0",
+                    "kind": "DockerImage"
+                },
+                "dockerImageMetadataVersion": "1.0",
+                "dockerImageReference": "172.30.1.1:5000/release-pipeline/eap-web@sha256:f2f1a9f1b594392f5fec987ce2bd16a8a8e40c475bd671b7d0dfa885c56b0c27",
+                "metadata": {
+                    "creationTimestamp": null,
+                    "name": "sha256:f2f1a9f1b594392f5fec987ce2bd16a8a8e40c475bd671b7d0dfa885c56b0c27"
+                }
+            },
+            "kind": "ImageStreamTag",
+            "lookupPolicy": {
+                "local": false
+            },
+            "metadata": {
+                "creationTimestamp": "2018-08-10T15:13:13Z",
+                "labels": {
+                    "build": "eap-web"
+                },
+                "name": "eap-web:1.0",
+                "namespace": "release-pipeline",
+                "resourceVersion": "1094519",
+                "selfLink": "/apis/image.openshift.io/v1/namespaces/release-pipeline/imagestreamtags/eap-web%3A1.0",
+                "uid": "8f25f46d-9c9e-11e8-90b6-c235f78658f4"
+            },
+            "tag": null
+        },
+        {
+            "apiVersion": "image.openshift.io/v1",
+            "generation": 1,
+            "image": {
+                "dockerImageLayers": null,
+                "dockerImageMetadata": {
+                    "ContainerConfig": {},
+                    "Created": null,
+                    "Id": "",
+                    "apiVersion": "1.0",
+                    "kind": "DockerImage"
+                },
+                "dockerImageMetadataVersion": "1.0",
+                "dockerImageReference": "172.30.1.1:5000/release-pipeline/eap-web@sha256:9c4220b8260a8d5992fcf7c2d399eb807ac9d70121b0524515e37d3ec8f7cf2b",
+                "metadata": {
+                    "creationTimestamp": null,
+                    "name": "sha256:9c4220b8260a8d5992fcf7c2d399eb807ac9d70121b0524515e37d3ec8f7cf2b"
+                }
+            },
+            "kind": "ImageStreamTag",
+            "lookupPolicy": {
+                "local": false
+            },
+            "metadata": {
+                "creationTimestamp": "2018-08-10T15:14:09Z",
+                "labels": {
+                    "build": "eap-web"
+                },
+                "name": "eap-web:2.0",
+                "namespace": "release-pipeline",
+                "resourceVersion": "1094519",
+                "selfLink": "/apis/image.openshift.io/v1/namespaces/release-pipeline/imagestreamtags/eap-web%3A2.0",
+                "uid": "8f25f46d-9c9e-11e8-90b6-c235f78658f4"
+            },
+            "tag": null
+        },
+        {
+            "apiVersion": "image.openshift.io/v1",
+            "generation": 1,
+            "image": {
+                "dockerImageLayers": null,
+                "dockerImageMetadata": {
+                    "ContainerConfig": {},
+                    "Created": null,
+                    "Id": "",
+                    "apiVersion": "1.0",
+                    "kind": "DockerImage"
+                },
+                "dockerImageMetadataVersion": "1.0",
+                "dockerImageReference": "172.30.1.1:5000/release-pipeline/eap-web@sha256:135dbe8433497646072bfdedc30192baf04c32c64ff84da97df20d97080fe0fc",
+                "metadata": {
+                    "creationTimestamp": null,
+                    "name": "sha256:135dbe8433497646072bfdedc30192baf04c32c64ff84da97df20d97080fe0fc"
+                }
+            },
+            "kind": "ImageStreamTag",
+            "lookupPolicy": {
+                "local": false
+            },
+            "metadata": {
+                "creationTimestamp": "2018-08-10T13:12:04Z",
+                "labels": {
+                    "build": "eap-web"
+                },
+                "name": "eap-web:latest",
+                "namespace": "release-pipeline",
+                "resourceVersion": "1094519",
+                "selfLink": "/apis/image.openshift.io/v1/namespaces/release-pipeline/imagestreamtags/eap-web%3Alatest",
+                "uid": "8f25f46d-9c9e-11e8-90b6-c235f78658f4"
+            },
+            "tag": null
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}
