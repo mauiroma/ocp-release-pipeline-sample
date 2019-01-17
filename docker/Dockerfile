@@ -1,3 +1,1 @@
-FROM centos:7
-
-RUN yum install -y httpd
+FROM httpd:2.4
