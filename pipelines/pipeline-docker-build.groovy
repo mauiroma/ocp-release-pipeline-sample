@@ -5,6 +5,9 @@ def target_cluster_flags = ""
 def docker_registry = "172.30.1.1"
 //def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
+//PREREQUISITES
+//oc new-build --strategy docker --binary  --name docker-release
+//oc start-build docker-release --from-dir . --follow
 pipeline {
     agent any
     stages{
@@ -22,130 +25,19 @@ pipeline {
                 }
             }
         }
-        /*
-        stage('Restore') {
+        stage('Source checkout') {
             steps {
-                script {                    
-                    withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
-                        def currentImage = 
-                            sh(
-                                script: "oc get dc ${OCP_BUILD_NAME} -o jsonpath='{.spec.template.spec.containers[0].image}' --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
-                                returnStdout: true
-                            )
-                        //If currentImage is the same version skip pipeline    
-                        if(currentImage.contains("${OCP_BUILD_NAME}:${BUILD_TAG}")){
-                            currentBuild.result = 'Image whit version ${OCP_BUILD_NAME}:${BUILD_TAG} already active, nothing to do'                                                        
-                            return
-                        }else{
-                            def existImage =
-                                sh(                                
-                                    script: "oc get imagestreamtag -o json --token=${OCP_SERVICE_TOKEN} -o json $target_cluster_flags",
-                                    returnStdout: true
-                                )                         
-                            if (existImage.trim().contains("${OCP_BUILD_NAME}:${BUILD_TAG}")) {
-                                def patchImageStream = 
-                                    sh(
-                                        script: "oc set image dc/${OCP_BUILD_NAME} ${OCP_BUILD_NAME}=$docker_registry:5000/${OCP_PRJ_NAMESPACE}/${OCP_BUILD_NAME}:${BUILD_TAG} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
-                                        returnStdout: true
-                                    )
-                                if (!patchImageStream?.trim()) {
-                                    def rollout = 
-                                        sh(
-                                            script: "oc rollout latest ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} $target_cluster_flags",
-                                            returnStdout: true
-                                        )
-                                    if (!rollout?.trim()) {
-                                        currentBuild.result = 'ERROR'
-                                        error('Rollout finished with errors')
-                                    }
-                                }
-                                currentBuild.result = 'Restored imagestreamtag ${OCP_BUILD_NAME}:${BUILD_TAG}'
-                                return
-                            }
-                        }
-                    }
-                }
+                checkout(
+                    [$class                           : 'GitSCM', branches: [[name: "refs/tags/${BUILD_TAG}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions                       : [],
+                        submoduleCfg                     : [],
+                        userRemoteConfigs                : [[credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_URL}"]]]
+                )
             }
-        }*/
-
-        //stage('Build') {
-        //    stages {
-                stage('Source checkout') {
-                    steps {
-                        checkout(
-                            [$class                           : 'GitSCM', branches: [[name: "refs/tags/${BUILD_TAG}"]],
-                                doGenerateSubmoduleConfigurations: false,
-                                extensions                       : [],
-                                submoduleCfg                     : [],
-                                userRemoteConfigs                : [[credentialsId: "${GIT_CREDENTIAL_ID}", url: "${GIT_URL}"]]]
-                        )
-                    }
-                }
-                stage('Maven') {
-                    steps {
-                        withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                            sh "mvn -f ${POM_FILE} versions:set -DnewVersion=${BUILD_TAG}"
-                        }
-                    }
-                }
-                stage('Run Tests') {
-                    parallel {
-                        stage('SonarQube analysis') {
-                            steps {
-                                script{
-                                    if(Boolean.parseBoolean(env.SONAR)){
-                                        withSonarQubeEnv('Sonar-MacLocalhost') {
-                                            withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                              sh "mvn -f ${POM_FILE} sonar:sonar"
-                                            }
-                                        }
-                                    }else{
-                                        echo "SonarQube analysis skipped"
-                                    }
-                                }
-                            }
-                        }                
-                        stage('Run Maven Tests') {
-                            steps {
-                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                    sh "mvn -f ${POM_FILE} test"
-                                }
-                            }
-                        }
-                    }
-                }
-                stage('Publish on nexus') {
-                    steps {
-                        script{                            
-                            if(Boolean.parseBoolean(env.DEPLOY_ON_NEXUS)){
-                                echo "DEPLOY ON NEXUS"
-                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                    sh "mvn -f ${POM_FILE} clean deploy -Dmaven.javadoc.skip=true -DskipTests "
-                                }
-                            }else{
-                                echo "PACKAGE"
-                                withMaven(mavenSettingsFilePath: "${MVN_SETTINGS}") {
-                                    sh "mvn -f ${POM_FILE} clean package -Dappversion=${BUILD_TAG} -Dmaven.javadoc.skip=true -DskipTests "
-                                }
-                            }
-                        }
-                    }
-                }
-            //}
-        //}
+        }
         stage('OCP'){
             stages {
-                stage('Prepare') {
-                    steps {
-                        sh """
-                            rm -rf ${WORKSPACE}/s2i-binary
-                            mkdir -p ${WORKSPACE}/s2i-binary
-                            cp ${WORKSPACE}/web-app/target/ROOT.war ${WORKSPACE}/s2i-binary
-                        """
-//                            mkdir -p ${WORKSPACE}/s2i-binary/configuration
-//                            cp ${WORKSPACE}/runtime-configuration/ocp/standalone-openshift.xml ${WORKSPACE}/s2i-binary/configuration/
-                    }
-                }                
                 stage('UpdateBuild') {
                     steps {
                         script {
@@ -172,7 +64,7 @@ pipeline {
                             withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def startBuildResult =
                                     sh(
-                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE}/s2i-binary $target_cluster_flags --follow",
+                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE} $target_cluster_flags --follow",
                                         returnStdout: true
                                     )
                                 if (!startBuildResult?.trim()) {

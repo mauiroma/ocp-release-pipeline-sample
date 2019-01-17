@@ -5,6 +5,18 @@ def target_cluster_flags = ""
 def docker_registry = "172.30.1.1"
 //def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: "0"
 //def docker-registry=docker-registry.default.svc
+/*
+# Necessaria dopo la prima build 
+oc patch bc eap-web -p '{"spec":{"output":{"to":{"kind":"ImageStreamTag","name":"eap-web:3.0"}}}}' --token=**** -o json --server=https://192.168.64.3:8443 --insecure-skip-tls-verify --namespace=release-pipeline
+|oc replace eap-web --token=**** --server=https://192.168.64.3:8443 --insecure-skip-tls-verify --namespace=release-pipeline -f -
+
+#In questa Build verrà creata una nuova versione dell'immagine con la tag del precedente comando
+oc start-build eap-web --token=**** --from-dir=/Users/mauiroma/.jenkins/workspace/cool-app-pipeline/s2i-binary ---namespace=release-pipeline
+
+oc set image dc/eap-web eap-web=172.30.1.1:5000/release-pipeline/eap-web:3.0 --token=**** --server=https://192.168.64.3:8443 --insecure-skip-tls-verify --namespace=release-pipeline
+oc get dc eap-web -o 'jsonpath={.spec.template.spec.containers[0].image}' --token=**** --server=https://192.168.64.3:8443 --insecure-skip-tls-verify --namespace=release-pipeline
+oc rollout latest eap-web --token=**** --server=https://192.168.64.3:8443 --insecure-skip-tls-verify --namespace=release-pipeline
+*/
 pipeline {
     agent any
     stages{
