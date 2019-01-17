@@ -64,7 +64,7 @@ pipeline {
                             withCredentials([string(credentialsId: "${OCP_SERVICE_TOKEN}", variable: 'OCP_SERVICE_TOKEN')]) {
                                 def startBuildResult =
                                     sh(
-                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-dir=${WORKSPACE} $target_cluster_flags --follow",
+                                        script: "oc start-build ${OCP_BUILD_NAME} --token=${OCP_SERVICE_TOKEN} --from-file=${WORKSPACE}/docker/Dockerfile $target_cluster_flags --follow",
                                         returnStdout: true
                                     )
                                 if (!startBuildResult?.trim()) {
